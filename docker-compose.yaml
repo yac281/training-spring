@@ -1,0 +1,35 @@
+services:
+  spring:
+    container_name: training
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    restart: "no"
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    links:
+      - db
+
+  db:
+    container_name: training-db
+    image: mariadb:10.11
+    restart: "no"
+    ports:
+      - "3306:3306"
+    env_file:
+      - .env
+    environment:
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+      - MARIADB_DATABASE=${MARIADB_NAME}
+      - MARIADB_USER=${MARIADB_USER}
+      - MARIADB_PASSWORD=${MARIADB_ROOT_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
+    driver: local
