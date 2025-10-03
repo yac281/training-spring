@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     restart: "no"
     ports:
-      - "5000:5000"
+      - "8080:8080"
     env_file:
       - .env
     depends_on:
@@ -16,20 +16,23 @@ services:
 
   db:
     container_name: training-db
-    image: mariadb:10.11
-    restart: "no"
+    image: mysql:latest
     ports:
       - "3306:3306"
+    volumes:
+      - ./.data/mysql:/var/lib/mysql
+      - ./logs/mysql:/var/log/mysql
+    command:
+      - "--lower_case_table_names=1"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     env_file:
       - .env
-    environment:
-      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
-      - MARIADB_DATABASE=${MARIADB_NAME}
-      - MARIADB_USER=${MARIADB_USER}
-      - MARIADB_PASSWORD=${MARIADB_ROOT_PASSWORD}
-    volumes:
-      - db_data:/var/lib/mysql
 
 volumes:
-  db_data:
+  db:
     driver: local
+    name: ${PROJECT_NAME}mysql_volume
