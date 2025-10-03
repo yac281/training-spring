@@ -20,10 +20,9 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./.data/mysql:/var/lib/mysql
-      - ./logs/mysql:/var/log/mysql
-    command:
-      - "--lower_case_table_names=1"
+      - db_data:/var/lib/mysql
+      - db_logs:/var/log/mysql
+      - ./mysql/conf.d:/etc/mysql/conf.d
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -33,6 +32,5 @@ services:
       - .env
 
 volumes:
-  db:
-    driver: local
-    name: ${PROJECT_NAME}mysql_volume
+  db_data:
+  db_logs:
