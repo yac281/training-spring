@@ -14,6 +14,7 @@ services:
       - db
     links:
       - db
+      - ollama
 
   db:
     container_name: training-db
@@ -31,7 +32,20 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     env_file:
       - .env
+  ollama:
+    image: ollama/ollama
+    container_name: training-ollama
+    ports:
+      - "11435:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+      - ./docker/modelFile/Modelfile:/root/Modelfile:ro
+      - ./docker/entrypoint/entrypoint.sh:/entrypoint.sh:ro
+    restart: unless-stopped
+    entrypoint: [ "/bin/bash", "/entrypoint.sh" ]
 
 volumes:
   db_data:
   db_logs:
+  ollama_data:
+
