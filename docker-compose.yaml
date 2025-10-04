@@ -14,6 +14,7 @@ services:
       - db
     links:
       - db
+      - ollama
 
   db:
     container_name: training-db
@@ -31,7 +32,22 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     env_file:
       - .env
+  ollama:
+    image: ollama/ollama
+    container_name: training-ollama
+    ports:
+      - "11435:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    entrypoint: [ "/bin/bash", "-c", "\
+        ollama serve & \
+        sleep 5 && \
+        ollama pull llama3.2:latest && \
+        wait" ]
 
 volumes:
   db_data:
   db_logs:
+  ollama_data:
+
