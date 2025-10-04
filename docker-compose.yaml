@@ -39,12 +39,10 @@ services:
       - "11435:11434"
     volumes:
       - ollama_data:/root/.ollama
+      - ./docker/modelFile/Modelfile:/root/Modelfile:ro
+      - ./docker/entrypoint/entrypoint.sh:/entrypoint.sh:ro
     restart: unless-stopped
-    entrypoint: [ "/bin/bash", "-c", "\
-        ollama serve & \
-        sleep 5 && \
-        ollama pull llama3.2:latest && \
-        wait" ]
+    entrypoint: [ "/bin/bash", "/entrypoint.sh" ]
 
 volumes:
   db_data:
